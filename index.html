@@ -51,7 +51,7 @@
 		function loadPlaces() {
             jQuery.ajax({
                 type: "Get",
-                url: "http://opendata.socrata.com/resource/yb8u-wwww.json",
+                url: "http://opendata.socrata.com/resource/yb8u-wwww.json?county=Ingham",
                 dataType: "json",
                 success: function (json) {
                 	places = json;
