@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  	<head>
+    	<link href="style.css" rel="stylesheet">
+    	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  	</head>
+  	<body>
+		<div id="controls">		
+			<span id='btnPrevious'>Previous</span>
+			<span id='resource'></span>
+			<span id='city'></span>
+			<span id='county'></span>
+			<span id='btnNext'>Next</span>
+		</div>
+		
+    	<div id="pano" style="width: 100%; height: 100%;"></div>   
+  	</body>
+	<script>
+		var places = [];
+		var m_placeNumber =0;
+		var cafe = new google.maps.LatLng(42.73461835,-84.55328607);
+
+		$(document).ready(function(){
+			loadPlaces();
+		});
+	
+		$("#btnNext").click(function(){
+			m_placeNumber = m_placeNumber + 1;
+			loadSinglePlace(m_placeNumber);
+		});
+		
+		$("#btnPrevious").click(function(){
+			if (m_placeNumber > 0) {
+				m_placeNumber = m_placeNumber - 1;
+				loadSinglePlace(m_placeNumber);
+			}
+		});
+		
+		function loadSinglePlace(placeNumber){
+			var rootItem = places[placeNumber];
+			var location = rootItem.location_1;
+			$("#resource").text(rootItem.resource);
+			$("#city").text(rootItem.city);
+			$("#county").text(rootItem.county);
+			
+			cafe = new google.maps.LatLng(location.latitude,location.longitude);
+			initialize();	
+		}
+		
+		function loadPlaces() {
+            jQuery.ajax({
+                type: "Get",
+                url: "http://opendata.socrata.com/resource/yb8u-wwww.json",
+                dataType: "json",
+                success: function (json) {
+                	places = json;
+                }
+            });
+        }
+		
+		function initialize() {
+			var panoramaOptions = {
+  			position: cafe,
+  				pov: {
+    					heading: 270,
+    					pitch: 0
+  				},
+  				visible: true
+			};	
+
+			var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
+		}
+
+		google.maps.event.addDomListener(window, 'load', initialize);
+  </script>
+</html>
